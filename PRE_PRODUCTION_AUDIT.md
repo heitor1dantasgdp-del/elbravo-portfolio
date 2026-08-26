@@ -160,6 +160,9 @@ The harness creates temporary published/draft fixtures in the configured disposa
 - `node --check scripts/supabase-integration-check.mjs`: passed.
 - `npm.cmd run test:supabase`: passed 10/10 against the disposable Supabase project; no production project was used.
 - `npm.cmd run dev`: started successfully with the ESM-safe Vite config; local `/` returned HTTP 200 with the application root.
+- `npm.cmd run test:routes`: passed 7/7 SPA shell route checks against the local server.
+- `npm.cmd run test:responsive`: passed 27/27 viewport, focus, and label checks.
+- Browser admin QA: failed-login and successful-login/dashboard access were verified against the disposable project; full CRUD/media/preview browser automation remains pending and is documented as manual QA.
 - No live database access, schema execution, or deployment performed.
 
 ## Vercel routing state
@@ -173,7 +176,7 @@ The SPA updates title/description/OG title/description client-side. It cannot pr
 ## Known issues
 
 - Production Supabase RLS/Storage tests are not executed; disposable-project checks passed.
-- Browser e2e tests are not included.
+- Browser rendering checks are available in `scripts/browser-cms-check.py`; the full CRUD/media/preview browser flow remains manual QA because no stable automated runner is currently included.
 - Existing old public object URLs, if any, require migration/cleanup before private-bucket enforcement.
 - SPA rewrite and client-only SEO requirements remain.
 - Mojibake in visible copy.

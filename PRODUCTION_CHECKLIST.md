@@ -7,6 +7,7 @@
 - [x] Create a test owner Auth user and add its UUID to `portfolio_admins`.
 - [x] Configure test-only variables locally.
 - [x] Run `npm run test:supabase` and record every PASS/FAIL (10/10 PASS).
+- [x] Run `npm run test:responsive` at 375, 430, 768, 1024 and 1440px (27/27 PASS).
 - [ ] Run `python scripts/browser-cms-check.py` and `npm run test:routes` against a test/preview URL.
 - [ ] Resolve every failure before copying the exact approved SQL/configuration to production.
 

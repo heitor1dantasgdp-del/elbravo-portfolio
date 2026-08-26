@@ -10,7 +10,8 @@
     "clean": "rm -rf dist server.js",
     "lint": "eslint .",
     "test:supabase": "node scripts/supabase-integration-check.mjs",
-    "test:routes": "node scripts/route-smoke-check.mjs"
+    "test:routes": "node scripts/route-smoke-check.mjs",
+    "test:responsive": "python scripts/responsive-a11y-check.py"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

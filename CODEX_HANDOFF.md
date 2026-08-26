@@ -27,7 +27,7 @@ This repository contains the official portfolio and dynamic content management s
 
 ### 2.2 Dual-Tier Data Repository (`src/lib/projectsRepository.ts`)
 - **Cloud Layer (Supabase PostgreSQL):** Reads and writes from `public.projects` table with Row-Level Security (RLS).
-- **Fallback / Local Persistence (`localStorage` + `seed-projects.ts`):** If Supabase is unconfigured, all changes persist seamlessly in browser `localStorage` and sync via `window` storage events.
+- **Fallback / Local Persistence (`localStorage` + `seed-projects.ts`):** Development-only offline fallback. Production fails closed when Supabase is unconfigured or a cloud write fails; localStorage must never be treated as production persistence or security.
 
 ---
 
@@ -65,11 +65,13 @@ CREATE TABLE IF NOT EXISTS public.projects (
 
 ### 3.2 Row Level Security (RLS)
 - **Public Read:** `SELECT` allowed only where `published = true`.
-- **Authenticated Admin:** Full CRUD (`ALL`) allowed for authenticated users.
+- **Authenticated Admin:** Full CRUD (`ALL`) is allowed only when `auth.uid()` exists in `portfolio_admins`.
 
 ### 3.3 Storage (`project-media` Bucket)
-- Public read access for cover images and screenshots.
-- Authenticated write access for admin media uploads.
+- Private bucket with signed URLs resolved at runtime.
+- Published media may be signed for anonymous reads through the published-project policy.
+- Draft media is not anonymously readable.
+- Authenticated write/delete access is restricted to the single owner in `portfolio_admins`.
 
 ---
 
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
 
 Documented in `.env.example`:
 ```env
-# Supabase Integration (Optional - falls back to persistent local storage if unset)
+# Supabase Integration (required for production; offline fallback is development-only)
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-public-key
 ```
@@ -134,4 +136,6 @@ VITE_SUPABASE_ANON_KEY=your-anon-public-key
 ## 6. Verification and Deployment
 
 1. **Compilation:** `npm run build` compiles static assets to `dist/`.
-2. **Quality Checks:** Fully validated with TypeScript strict checking and ESLint.
+2. **Quality Checks:** TypeScript and ESLint pass locally; one intentional defensive `any` warning remains.
+3. **Current state:** TEST SUPABASE: PASSED (10/10); PRODUCTION SUPABASE: NOT YET EXECUTED; VERCEL PREVIEW: NOT YET DEPLOYED; CUSTOM DOMAIN: NOT YET CONNECTED. Local route and responsive smoke checks pass; full authenticated CRUD/media browser QA remains manual.
+4. **Operational guides:** See `SUPABASE_PRODUCTION_SETUP.md` and `VERCEL_DEPLOYMENT.md` before any production action.
