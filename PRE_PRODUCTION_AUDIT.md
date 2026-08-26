@@ -146,7 +146,7 @@ Run after setting `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_OWNER_EMAIL`, `
 npm run test:supabase
 ```
 
-The harness checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, and owner media upload/remove. A separate `npm run test:routes` checks the SPA shell for all required paths. Neither script has been run against a configured project or deployed preview. Browser rendering, mobile/desktop, and preview-flow checks remain manual/e2e work.
+The harness creates temporary published/draft fixtures in the configured disposable project and checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, publish/unpublish, and owner media upload/remove. On 2026-08-26 it completed 10/10 PASS against the disposable Supabase project. A separate `npm run test:routes` checks the SPA shell for all required paths. Browser rendering, mobile/desktop, and preview-flow checks remain manual/e2e work.
 
 `SUPABASE_TEST_SETUP.md` documents the disposable-project setup, safe variables, expected PASS output, and browser checks.
 
@@ -158,7 +158,8 @@ The harness checks anonymous published/draft reads, anonymous project insert/upd
 - `npm.cmd run build`: passed.
 - Build warning: main JS chunk is about 643 kB, above Vite’s 500 kB warning threshold.
 - `node --check scripts/supabase-integration-check.mjs`: passed.
-- `npm.cmd run test:supabase`: not run because real Supabase/test credentials are not configured.
+- `npm.cmd run test:supabase`: passed 10/10 against the disposable Supabase project; no production project was used.
+- `npm.cmd run dev`: started successfully with the ESM-safe Vite config; local `/` returned HTTP 200 with the application root.
 - No live database access, schema execution, or deployment performed.
 
 ## Vercel routing state
@@ -171,7 +172,7 @@ The SPA updates title/description/OG title/description client-side. It cannot pr
 
 ## Known issues
 
-- Real Supabase RLS/Storage tests are not executed.
+- Production Supabase RLS/Storage tests are not executed; disposable-project checks passed.
 - Browser e2e tests are not included.
 - Existing old public object URLs, if any, require migration/cleanup before private-bucket enforcement.
 - SPA rewrite and client-only SEO requirements remain.
@@ -184,4 +185,4 @@ The SPA updates title/description/OG title/description client-side. It cannot pr
 
 ## Recommended next step
 
-Run the approved SQL only in a disposable Supabase project, configure test-only variables, run `npm run test:supabase`, and perform the browser route/preview matrix before configuring production variables or deploying.
+Run the browser route/preview matrix against the local/test environment, then review and copy the approved SQL/configuration to production only after human approval. Do not deploy yet.

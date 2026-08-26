@@ -2,11 +2,11 @@
 
 ## 0. Disposable test project (required first)
 
-- [ ] Create a separate test Supabase project; never use production as the first target.
-- [ ] Review and run the approved schema there only.
-- [ ] Create a test owner Auth user and add its UUID to `portfolio_admins`.
-- [ ] Configure test-only variables locally.
-- [ ] Run `npm run test:supabase` and record every PASS/FAIL.
+- [x] Create a separate test Supabase project; never use production as the first target.
+- [x] Review and run the approved schema there only.
+- [x] Create a test owner Auth user and add its UUID to `portfolio_admins`.
+- [x] Configure test-only variables locally.
+- [x] Run `npm run test:supabase` and record every PASS/FAIL (10/10 PASS).
 - [ ] Run `python scripts/browser-cms-check.py` and `npm run test:routes` against a test/preview URL.
 - [ ] Resolve every failure before copying the exact approved SQL/configuration to production.
 
