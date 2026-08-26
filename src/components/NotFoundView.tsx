@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, SearchX, Home, Layers } from 'lucide-react';
+import { ArrowLeft, SearchX } from 'lucide-react';
 import { Language } from '../types';
 
 interface NotFoundViewProps {

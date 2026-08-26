@@ -1,4 +1,5 @@
 import { Project } from '../types';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { projectsData } from '../data/projects';
 import { getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
 
@@ -34,7 +35,7 @@ const mapDbRowToProject = (row: any): Project => {
 };
 
 // Helper to map Project interface to DB row
-const mapProjectToDbRow = (project: Project): any => {
+const mapProjectToDbRow = (project: Project): Record<string, unknown> => {
   return {
     id: project.id || `proj_${project.slug}_${Date.now()}`,
     slug: project.slug,
@@ -209,13 +210,13 @@ export const saveProject = async (project: Project): Promise<{ success: boolean;
       const saved = mapDbRowToProject(data);
       saveToLocalStorage(saved);
       return { success: true, project: saved };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving to Supabase:', err);
       if (isLocalFallbackAllowed()) {
         saveToLocalStorage(normalized);
-        return { success: true, project: normalized, error: err?.message };
+        return { success: true, project: normalized, error: err instanceof Error ? err.message : 'Save failed' };
       }
-      return { success: false, error: err?.message || 'Save failed' };
+      return { success: false, error: err instanceof Error ? err.message : 'Save failed' };
     }
   }
 
@@ -262,9 +263,9 @@ export const deleteProject = async (idOrSlug: string): Promise<{ success: boolea
         console.error('Supabase delete error:', error);
         return { success: false, error: error.message };
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting from Supabase:', err);
-      return { success: false, error: err?.message || 'Delete failed' };
+      return { success: false, error: err instanceof Error ? err.message : 'Delete failed' };
     }
   }
 
@@ -335,7 +336,7 @@ export const subscribeToProjects = (callback: () => void): (() => void) => {
   window.addEventListener('storage', handleCustomEvent);
 
   const supabase = getSupabaseClient();
-  let channel: any = null;
+  let channel: RealtimeChannel | null = null;
 
   if (supabase && isSupabaseConfigured()) {
     try {

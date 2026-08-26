@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDown, ArrowUpRight, Sparkles, Terminal, Layers, CheckCircle2 } from 'lucide-react';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { Language, Project } from '../types';
 import { profileData } from '../data/profile';
 import { i18n } from '../data/i18n';

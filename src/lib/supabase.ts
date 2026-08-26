@@ -92,9 +92,9 @@ export const uploadProjectMedia = async (
 
       // Persist the path marker, never a permanent or expiring URL.
       return { url: `supabase://project-media/${data.path}`, previewUrl: signedUrlData.signedUrl };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error during media upload:', err);
-      return { url: '', error: err?.message || 'Upload failed' };
+      return { url: '', error: err instanceof Error ? err.message : 'Upload failed' };
     }
   }
 

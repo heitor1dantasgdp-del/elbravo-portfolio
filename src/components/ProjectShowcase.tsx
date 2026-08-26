@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, BookOpen, Layers, Terminal, Sparkles, Shield, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, BookOpen } from 'lucide-react';
 import { Project, Language } from '../types';
 import { i18n } from '../data/i18n';
 import { ProjectBrowserMockup } from './ProjectBrowserMockup';
@@ -17,21 +17,6 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({
 }) => {
   const t = i18n[lang].showcase;
   const statusLabels = i18n[lang].statusTag;
-
-  const getStatusColor = (status: Project['status']) => {
-    switch (status) {
-      case 'building':
-        return 'bg-indigo-950/80 border-indigo-700/60 text-indigo-300';
-      case 'testing':
-        return 'bg-amber-950/80 border-amber-700/60 text-amber-300';
-      case 'beta':
-        return 'bg-violet-950/80 border-violet-700/60 text-violet-300';
-      case 'released':
-        return 'bg-emerald-950/80 border-emerald-700/60 text-emerald-300';
-      default:
-        return 'bg-gray-900 border-gray-700 text-gray-400';
-    }
-  };
 
   return (
     <section id="projects" className="py-20 sm:py-28 relative bg-[#050505] border-t border-white/10">

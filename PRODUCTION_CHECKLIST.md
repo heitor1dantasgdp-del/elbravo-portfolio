@@ -1,6 +1,16 @@
 # Production Checklist
 
-## 1. Supabase project
+## 0. Disposable test project (required first)
+
+- [ ] Create a separate test Supabase project; never use production as the first target.
+- [ ] Review and run the approved schema there only.
+- [ ] Create a test owner Auth user and add its UUID to `portfolio_admins`.
+- [ ] Configure test-only variables locally.
+- [ ] Run `npm run test:supabase` and record every PASS/FAIL.
+- [ ] Run `python scripts/browser-cms-check.py` and `npm run test:routes` against a test/preview URL.
+- [ ] Resolve every failure before copying the exact approved SQL/configuration to production.
+
+## 1. Production Supabase project
 
 - [ ] Create the production Supabase project.
 - [ ] Create the single owner Auth email/password account.
@@ -19,7 +29,7 @@
 
 ## 3. Security and functional tests
 
-- [ ] Run `npm run test:supabase` with test-only credentials and fixture slugs.
+- [ ] Run `npm run test:supabase` with production test fixtures after the schema review.
 - [ ] Run `npm run test:routes` against a Vercel preview URL.
 - [ ] Confirm anonymous published read succeeds.
 - [ ] Confirm anonymous draft read fails/returns no row.

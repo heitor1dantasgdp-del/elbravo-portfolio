@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Github, Linkedin, Copy, Check, ArrowUpRight, MessageSquare, Send, Sparkles } from 'lucide-react';
+import { Github, Linkedin, Copy, Check, ArrowUpRight, Send, Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { profileData } from '../data/profile';
 import { i18n } from '../data/i18n';

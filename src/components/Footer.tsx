@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Github, Linkedin, Terminal, Globe } from 'lucide-react';
+import { Github, Linkedin, Globe } from 'lucide-react';
 import { Language } from '../types';
 import { profileData } from '../data/profile';
 import { i18n } from '../data/i18n';

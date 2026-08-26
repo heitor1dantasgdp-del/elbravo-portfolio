@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Globe, Zap, Cpu, Sparkles, CheckCircle2, Rocket, ArrowUpRight } from 'lucide-react';
+import { Layers, Globe, Zap, Sparkles, CheckCircle2, Rocket } from 'lucide-react';
 import { Language, Project } from '../types';
 import { i18n } from '../data/i18n';
 

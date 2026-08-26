@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserCheck, Sparkles, Terminal, Code2, ShieldCheck, ArrowRight, HeartHandshake } from 'lucide-react';
+import { UserCheck, ArrowRight } from 'lucide-react';
 import { Language } from '../types';
 import { profileData } from '../data/profile';
 import { i18n } from '../data/i18n';

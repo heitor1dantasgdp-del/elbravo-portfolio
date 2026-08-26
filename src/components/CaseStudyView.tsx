@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, ArrowUpRight, Copy, Check, ShieldAlert, Sparkles, 
-  Terminal, Layers, BookOpen, AlertCircle, Wrench, CheckCircle2, 
-  Users, Key, ExternalLink, Calendar, DollarSign, FileText, ArrowRight, EyeOff
+  AlertCircle, Wrench, CheckCircle2,
+  Users, Key, ArrowRight, EyeOff
 } from 'lucide-react';
 import { Project, Language } from '../types';
 import { i18n } from '../data/i18n';

@@ -14,8 +14,6 @@ import {
   ExternalLink,
   LogOut,
   RefreshCw,
-  Sparkles,
-  Layers,
   HelpCircle,
   AlertTriangle
 } from 'lucide-react';

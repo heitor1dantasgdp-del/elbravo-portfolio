@@ -148,11 +148,13 @@ npm run test:supabase
 
 The harness checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, and owner media upload/remove. A separate `npm run test:routes` checks the SPA shell for all required paths. Neither script has been run against a configured project or deployed preview. Browser rendering, mobile/desktop, and preview-flow checks remain manual/e2e work.
 
+`SUPABASE_TEST_SETUP.md` documents the disposable-project setup, safe variables, expected PASS output, and browser checks.
+
 ## Build/typecheck/lint results
 
 - `npm.cmd install`: passed; 225 packages added, 226 audited, 0 vulnerabilities reported. One deprecated transitive package warning.
 - `npx.cmd tsc --noEmit`: passed.
-- `npm.cmd run lint`: passed with 0 errors and 79 warnings (mostly pre-existing unused imports and explicit `any` warnings).
+- `npm.cmd run lint`: passed with 0 errors and 1 remaining warning (defensive Supabase row mapper uses `any`); reduced from 79 warnings without broad refactoring.
 - `npm.cmd run build`: passed.
 - Build warning: main JS chunk is about 643 kB, above Vite’s 500 kB warning threshold.
 - `node --check scripts/supabase-integration-check.mjs`: passed.

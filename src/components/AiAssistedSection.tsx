@@ -1,8 +1,7 @@
 import React from 'react';
-import { Cpu, CheckCircle2, Sparkles, Terminal, FileCode } from 'lucide-react';
+import { Cpu, CheckCircle2 } from 'lucide-react';
 import { Language } from '../types';
 import { profileData } from '../data/profile';
-import { i18n } from '../data/i18n';
 
 interface AiProps {
   lang: Language;
@@ -10,7 +9,6 @@ interface AiProps {
 
 export const AiAssistedSection: React.FC<AiProps> = ({ lang }) => {
   const aiInfo = profileData.aiPhilosophy;
-  const t = i18n[lang].ai;
 
   return (
     <section id="ai-workflow" className="py-16 sm:py-20 bg-[#050505] border-t border-white/10 relative">

@@ -8,12 +8,7 @@ import {
   Image as ImageIcon,
   ArrowUp,
   ArrowDown,
-  Layers,
-  Sparkles,
-  Link as LinkIcon,
   ShieldAlert,
-  Eye,
-  Check,
   AlertCircle
 } from 'lucide-react';
 import { Project, ProjectStatus, ProjectScreenshot, ProjectFeature } from '../../types';
@@ -42,7 +37,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const [name, setName] = useState(initialProject?.name || '');
   const [slug, setSlug] = useState(initialProject?.slug || '');
   const [displayOrder, setDisplayOrder] = useState<number>(initialProject?.displayOrder ?? 1);
-  const [orderNumber, setOrderNumber] = useState(initialProject?.orderNumber || '01');
   const [status, setStatus] = useState<ProjectStatus>(initialProject?.status || 'building');
   const [published, setPublished] = useState<boolean>(initialProject?.published ?? true);
   const [featured, setFeatured] = useState<boolean>(initialProject?.featured ?? false);
@@ -90,23 +84,23 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const [problemPt, setProblemPt] = useState(initialProject?.caseStudy.problem.pt || '');
   const [problemEn, setProblemEn] = useState(initialProject?.caseStudy.problem.en || '');
 
-  const [ideaPt, setIdeaPt] = useState(initialProject?.caseStudy.idea.pt || '');
-  const [ideaEn, setIdeaEn] = useState(initialProject?.caseStudy.idea.en || '');
+  const [ideaPt] = useState(initialProject?.caseStudy.idea.pt || '');
+  const [ideaEn] = useState(initialProject?.caseStudy.idea.en || '');
 
   const [solutionPt, setSolutionPt] = useState(initialProject?.caseStudy.solution.pt || '');
   const [solutionEn, setSolutionEn] = useState(initialProject?.caseStudy.solution.en || '');
 
   const [challengesPt, setChallengesPt] = useState(initialProject?.caseStudy.challenges.pt || '');
-  const [challengesEn, setChallengesEn] = useState(initialProject?.caseStudy.challenges.en || '');
+  const [challengesEn] = useState(initialProject?.caseStudy.challenges.en || '');
 
   const [learningPt, setLearningPt] = useState(initialProject?.caseStudy.learning.pt || '');
-  const [learningEn, setLearningEn] = useState(initialProject?.caseStudy.learning.en || '');
+  const [learningEn] = useState(initialProject?.caseStudy.learning.en || '');
 
   const [limitationsPt, setLimitationsPt] = useState(initialProject?.caseStudy.limitations.pt || '');
-  const [limitationsEn, setLimitationsEn] = useState(initialProject?.caseStudy.limitations.en || '');
+  const [limitationsEn] = useState(initialProject?.caseStudy.limitations.en || '');
 
   const [nextStepsPt, setNextStepsPt] = useState(initialProject?.caseStudy.nextSteps.pt || '');
-  const [nextStepsEn, setNextStepsEn] = useState(initialProject?.caseStudy.nextSteps.en || '');
+  const [nextStepsEn] = useState(initialProject?.caseStudy.nextSteps.en || '');
 
   // Features Array
   const [features, setFeatures] = useState<ProjectFeature[]>(
@@ -126,7 +120,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const [demoPassword, setDemoPassword] = useState(initialProject?.demoCredentials?.password || '');
   const [demoRole, setDemoRole] = useState(initialProject?.demoCredentials?.role || '');
   const [demoNotesPt, setDemoNotesPt] = useState(initialProject?.demoCredentials?.notes?.pt || '');
-  const [demoNotesEn, setDemoNotesEn] = useState(initialProject?.demoCredentials?.notes?.en || '');
+  const [demoNotesEn] = useState(initialProject?.demoCredentials?.notes?.en || '');
 
   // Auto-generate slug from name if not manually set
   const handleNameChange = (val: string) => {
@@ -172,7 +166,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       }
       setCoverImage(res.url);
       setCoverPreviewUrl(res.previewUrl || res.url);
-    } catch (err: any) {
+    } catch {
       setError('Falha no upload da imagem de capa.');
     } finally {
       setUploadingCover(false);
@@ -204,7 +198,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
         altText: `Screenshot de ${name || 'projeto'}`,
       };
       setScreenshots((current) => [...current, newScreenshot]);
-    } catch (err: any) {
+    } catch {
       setError('Falha no upload da captura de tela.');
     } finally {
       setUploadingScreenshot(false);
@@ -368,8 +362,8 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
         }),
       });
       onClose();
-    } catch (err: any) {
-      setError(err?.message || 'Erro ao salvar o projeto.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erro ao salvar o projeto.');
     } finally {
       setSaving(false);
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lightbulb, ArrowRight, Sparkles, MessageSquare } from 'lucide-react';
+import { Lightbulb, MessageSquare } from 'lucide-react';
 import { Language } from '../types';
 import { i18n } from '../data/i18n';
 

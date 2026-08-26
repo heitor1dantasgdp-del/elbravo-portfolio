@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, ArrowUpRight, Flame, Clock, Layers } from 'lucide-react';
+import { Activity, ArrowUpRight } from 'lucide-react';
 import { Project, Language } from '../types';
 import { i18n } from '../data/i18n';
 

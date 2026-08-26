@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, CheckCircle2, DollarSign, Calendar, TrendingUp, Sparkles, User, FileText, ArrowUpRight, Shield } from 'lucide-react';
+import { CheckCircle2, Calendar, TrendingUp, Sparkles, FileText, Shield } from 'lucide-react';
 import { Project, Language } from '../types';
 
 interface MockupProps {

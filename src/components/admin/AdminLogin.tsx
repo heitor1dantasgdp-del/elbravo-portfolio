@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, ShieldCheck, Database, KeyRound, ArrowRight, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
+import { Lock, Database, KeyRound, AlertCircle, CheckCircle } from 'lucide-react';
 import { getSupabaseClient, isLocalFallbackAllowed, isPortfolioOwner, isSupabaseConfigured } from '../../lib/supabase';
 
 interface AdminLoginProps {
@@ -57,8 +57,8 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess, onExitToSite 
           setError('Em modo local/desenvolvimento, use qualquer senha com pelo menos 6 caracteres (ex: admin123).');
         }
       }
-    } catch (err: any) {
-      setError(err?.message || 'Falha ao autenticar.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Falha ao autenticar.');
     } finally {
       setLoading(false);
     }
