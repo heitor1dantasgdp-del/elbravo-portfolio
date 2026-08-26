@@ -1,0 +1,6 @@
+{
+  "name": "El Bravo Dantas Portfolio",
+  "description": "Professional product design & web development portfolio for El Bravo Dantas showcasing real, deployed SaaS applications, case studies, and transparent build processes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
