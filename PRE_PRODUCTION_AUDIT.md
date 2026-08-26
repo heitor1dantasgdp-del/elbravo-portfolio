@@ -162,7 +162,9 @@ The harness creates temporary published/draft fixtures in the configured disposa
 - `npm.cmd run dev`: started successfully with the ESM-safe Vite config; local `/` returned HTTP 200 with the application root.
 - `npm.cmd run test:routes`: passed 7/7 SPA shell route checks against the local server.
 - `npm.cmd run test:responsive`: passed 27/27 viewport, focus, and label checks.
-- Browser admin QA: failed-login and successful-login/dashboard access were verified against the disposable project; full CRUD/media/preview browser automation remains pending and is documented as manual QA.
+- `npm.cmd run test:cms`: passed 15/15 CMS browser scenarios; final cleanup confirmed zero E2E project rows and removed 8 orphaned E2E media objects.
+- Browser admin QA: `npm run test:cms` passed 15/15 against the disposable project, including draft CRUD, multiple media upload/reorder/remove, authenticated preview, publish/unpublish, public rendering, deletion, and logout. Remaining manual-only scenarios are listed in `CMS_E2E_REPORT.md`.
+- `CMS_E2E_REPORT.md` records the completed browser scenarios, cleanup confirmation, and remaining manual-only checks.
 - No live database access, schema execution, or deployment performed.
 
 ## Vercel routing state

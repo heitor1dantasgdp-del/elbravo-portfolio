@@ -1,6 +1,7 @@
+import os
 from playwright.sync_api import sync_playwright
 
-base = 'http://localhost:3000'
+base = os.environ.get('BASE_URL', 'http://localhost:3000')
 widths = [375, 430, 768, 1024, 1440]
 routes = ['/', '/projects', '/about', '/contact', '/admin/login']
 results = []
