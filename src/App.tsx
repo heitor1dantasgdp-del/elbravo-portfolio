@@ -23,8 +23,28 @@ import { AdminRouter } from './components/admin/AdminRouter';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFoundView } from './components/NotFoundView';
 
+const getProjectSlugFromLocation = (): string | null => {
+  if (typeof window === 'undefined') return null;
+
+  const pathMatch = window.location.pathname.match(/^\/projects\/([^/]+)\/?$/);
+  if (pathMatch) return decodeURIComponent(pathMatch[1]);
+
+  const hash = window.location.hash;
+  if (hash.startsWith('#project-')) return hash.replace('#project-', '');
+  if (hash.startsWith('#projects/')) return hash.replace('#projects/', '');
+  return null;
+};
+
+const getSectionFromLocation = (): string => {
+  if (typeof window === 'undefined') return 'hero';
+  if (window.location.pathname === '/projects') return 'projects';
+  if (window.location.pathname === '/about') return 'about';
+  if (window.location.pathname === '/contact') return 'contact';
+  return 'hero';
+};
+
 export default function App() {
-  const { allProjects, publishedProjects, loading } = useProjects();
+  const { publishedProjects, loading } = useProjects();
 
   const [lang, setLang] = useState<Language>(() => {
     try {
@@ -41,25 +61,26 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
       const pathname = window.location.pathname;
-      return hash === '#admin' || hash.startsWith('#admin') || pathname === '/admin';
+      return hash === '#admin' || hash.startsWith('#admin') || pathname === '/admin' || pathname.startsWith('/admin/');
     }
     return false;
   });
 
   const [selectedProjectSlug, setSelectedProjectSlug] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      if (hash.startsWith('#project-')) {
-        return hash.replace('#project-', '');
-      }
-      if (hash.startsWith('#projects/')) {
-        return hash.replace('#projects/', '');
-      }
+      return getProjectSlugFromLocation();
     }
     return null;
   });
 
-  const [activeSection, setActiveSection] = useState<string>('hero');
+  const [activeSection, setActiveSection] = useState<string>(getSectionFromLocation);
+
+  useEffect(() => {
+    const sectionId = getSectionFromLocation();
+    if (sectionId === 'hero' || selectedProjectSlug) return;
+    const timer = window.setTimeout(() => document.getElementById(sectionId)?.scrollIntoView(), 0);
+    return () => window.clearTimeout(timer);
+  }, [selectedProjectSlug]);
 
   // Handle language switch
   const toggleLanguage = () => {
@@ -77,14 +98,14 @@ export default function App() {
   const handleOpenCaseStudy = (slug: string) => {
     setIsAdminView(false);
     setSelectedProjectSlug(slug);
-    window.location.hash = `project-${slug}`;
+    window.history.pushState({}, '', `/projects/${encodeURIComponent(slug)}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Close Case Study and restore home view
   const handleCloseCaseStudy = () => {
     setSelectedProjectSlug(null);
-    history.pushState('', document.title, window.location.pathname + window.location.search);
+    history.pushState({}, document.title, '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -99,7 +120,8 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === '#admin' || hash.startsWith('#admin')) {
+      const pathname = window.location.pathname;
+      if (hash === '#admin' || hash.startsWith('#admin') || pathname === '/admin' || pathname.startsWith('/admin/')) {
         setIsAdminView(true);
         setSelectedProjectSlug(null);
         return;
@@ -107,18 +129,7 @@ export default function App() {
 
       setIsAdminView(false);
 
-      if (hash.startsWith('#project-')) {
-        const slug = hash.replace('#project-', '');
-        setSelectedProjectSlug(slug);
-        return;
-      }
-      if (hash.startsWith('#projects/')) {
-        const slug = hash.replace('#projects/', '');
-        setSelectedProjectSlug(slug);
-        return;
-      }
-
-      setSelectedProjectSlug(null);
+      setSelectedProjectSlug(getProjectSlugFromLocation());
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -136,7 +147,7 @@ export default function App() {
     }
     if (selectedProjectSlug) {
       setSelectedProjectSlug(null);
-      history.pushState('', document.title, window.location.pathname + window.location.search);
+      history.pushState({}, document.title, '/');
     }
 
     setActiveSection(sectionId);
@@ -153,9 +164,10 @@ export default function App() {
     }, 50);
   };
 
-  // Active project object (supports all projects so admin can preview drafts)
+  // Public routes may resolve published projects only. Draft preview must stay
+  // inside an authenticated admin surface; it cannot be a public hash route.
   const currentCaseProject = selectedProjectSlug
-    ? allProjects.find((p) => p.slug === selectedProjectSlug) || null
+    ? publishedProjects.find((p) => p.slug === selectedProjectSlug) || null
     : null;
 
   // Render Admin View
@@ -164,16 +176,15 @@ export default function App() {
       <ErrorBoundary>
         <AdminRouter
           onExitToSite={handleExitAdmin}
-          onPreviewCaseStudy={(slug) => handleOpenCaseStudy(slug)}
         />
       </ErrorBoundary>
     );
   }
 
   // Active public projects list
-  const displayProjects = publishedProjects.length > 0 ? publishedProjects : allProjects;
-  const heroPrimary = displayProjects[0] || allProjects[0];
-  const heroSecondary = displayProjects[1] || allProjects[1];
+  const displayProjects = publishedProjects;
+  const heroPrimary = displayProjects[0];
+  const heroSecondary = displayProjects[1];
 
   return (
     <ErrorBoundary>

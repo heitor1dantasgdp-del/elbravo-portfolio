@@ -1,6 +1,6 @@
 import { Project } from '../types';
 import { projectsData } from '../data/projects';
-import { getSupabaseClient, isSupabaseConfigured } from './supabase';
+import { getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
 
 const STORAGE_KEY = 'el_bravo_portfolio_projects_v2';
 const PROJECTS_CHANGE_EVENT = 'el_bravo_projects_updated';
@@ -60,8 +60,38 @@ const mapProjectToDbRow = (project: Project): any => {
   };
 };
 
+const hydrateProjectMedia = async (project: Project): Promise<Project> => {
+  const [coverImage, screenshots] = await Promise.all([
+    resolveProjectMediaUrl(project.coverImage),
+    Promise.all(project.screenshots.map(async (shot) => ({
+      ...shot,
+      storagePath: shot.url?.startsWith('supabase://project-media/') ? shot.url : shot.storagePath,
+      url: await resolveProjectMediaUrl(shot.url),
+    }))),
+  ]);
+  return {
+    ...project,
+    coverImagePath: project.coverImage?.startsWith('supabase://project-media/') ? project.coverImage : project.coverImagePath,
+    coverImage,
+    screenshots,
+  };
+};
+
+const toPersistableProject = (project: Project): Project => ({
+  ...project,
+  coverImage: project.coverImagePath || project.coverImage,
+  screenshots: project.screenshots.map((shot) => {
+    const persisted = { ...shot };
+    delete persisted.previewUrl;
+    delete persisted.storagePath;
+    persisted.url = shot.storagePath || shot.url;
+    return persisted;
+  }),
+});
+
 // Local storage management
 const getLocalStorageProjects = (): Project[] => {
+  if (!isLocalFallbackAllowed()) return projectsData;
   if (typeof window === 'undefined') return projectsData;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -101,28 +131,23 @@ export const getAllProjects = async (): Promise<Project[]> => {
         .order('display_order', { ascending: true });
 
       if (error) {
-        console.warn('Supabase fetch error, falling back to local:', error.message);
-        return getLocalStorageProjects();
+        console.warn('Supabase fetch error:', error.message);
+        return isLocalFallbackAllowed() ? getLocalStorageProjects() : [];
       }
 
       if (data && data.length > 0) {
-        const mapped = data.map(mapDbRowToProject);
+        const mapped = await Promise.all(data.map(mapDbRowToProject).map(hydrateProjectMedia));
         // Cache to local storage
         if (typeof window !== 'undefined') {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
         }
         return mapped;
       } else {
-        // If Supabase table is empty, seed from local projects
-        const local = getLocalStorageProjects();
-        for (const p of local) {
-          await supabase.from('projects').upsert(mapProjectToDbRow(p));
-        }
-        return local;
+        return [];
       }
     } catch (err) {
       console.warn('Error fetching from Supabase:', err);
-      return getLocalStorageProjects();
+      return isLocalFallbackAllowed() ? getLocalStorageProjects() : [];
     }
   }
 
@@ -143,7 +168,7 @@ export const getPublishedProjects = async (): Promise<Project[]> => {
  * Get single project by slug
  */
 export const getProjectBySlug = async (slug: string): Promise<Project | null> => {
-  const all = await getAllProjects();
+  const all = await getPublishedProjects();
   const found = all.find((p) => p.slug === slug);
   return found || null;
 };
@@ -165,7 +190,7 @@ export const saveProject = async (project: Project): Promise<{ success: boolean;
 
   if (supabase && isSupabaseConfigured()) {
     try {
-      const dbRow = mapProjectToDbRow(normalized);
+      const dbRow = mapProjectToDbRow(toPersistableProject(normalized));
       const { data, error } = await supabase
         .from('projects')
         .upsert(dbRow, { onConflict: 'slug' })
@@ -174,9 +199,11 @@ export const saveProject = async (project: Project): Promise<{ success: boolean;
 
       if (error) {
         console.error('Supabase save error:', error);
-        // Save to local storage as safety
-        saveToLocalStorage(normalized);
-        return { success: true, project: normalized, error: `Saved locally (Supabase: ${error.message})` };
+        if (isLocalFallbackAllowed()) {
+          saveToLocalStorage(normalized);
+          return { success: true, project: normalized, error: `Saved locally (Supabase: ${error.message})` };
+        }
+        return { success: false, error: error.message };
       }
 
       const saved = mapDbRowToProject(data);
@@ -184,12 +211,19 @@ export const saveProject = async (project: Project): Promise<{ success: boolean;
       return { success: true, project: saved };
     } catch (err: any) {
       console.error('Error saving to Supabase:', err);
-      saveToLocalStorage(normalized);
-      return { success: true, project: normalized, error: err?.message };
+      if (isLocalFallbackAllowed()) {
+        saveToLocalStorage(normalized);
+        return { success: true, project: normalized, error: err?.message };
+      }
+      return { success: false, error: err?.message || 'Save failed' };
     }
   }
 
-  // Local storage mode
+  if (!isLocalFallbackAllowed()) {
+    return { success: false, error: 'Supabase is not configured; project persistence is disabled in production.' };
+  }
+
+  // Development-only local storage mode.
   saveToLocalStorage(normalized);
   return { success: true, project: normalized };
 };
@@ -226,10 +260,16 @@ export const deleteProject = async (idOrSlug: string): Promise<{ success: boolea
 
       if (error) {
         console.error('Supabase delete error:', error);
+        return { success: false, error: error.message };
       }
     } catch (err: any) {
       console.error('Error deleting from Supabase:', err);
+      return { success: false, error: err?.message || 'Delete failed' };
     }
+  }
+
+  if (!isLocalFallbackAllowed()) {
+    return { success: false, error: 'Supabase is not configured; project persistence is disabled in production.' };
   }
 
   const current = getLocalStorageProjects();
@@ -254,15 +294,22 @@ export const reorderProjects = async (orderedProjects: Project[]): Promise<boole
   if (supabase && isSupabaseConfigured()) {
     try {
       for (const p of reindexed) {
-        await supabase
+        const { error } = await supabase
           .from('projects')
           .update({ display_order: p.displayOrder, order_number: p.orderNumber })
           .eq('slug', p.slug);
+        if (error) {
+          console.error('Supabase reorder error:', error);
+          return false;
+        }
       }
     } catch (err) {
       console.error('Error reordering in Supabase:', err);
+      return false;
     }
   }
+
+  if (!isLocalFallbackAllowed()) return false;
 
   setLocalStorageProjects(reindexed);
   return true;
@@ -272,6 +319,7 @@ export const reorderProjects = async (orderedProjects: Project[]): Promise<boole
  * Reset / Re-seed projects with defaults
  */
 export const resetToDefaultProjects = async (): Promise<Project[]> => {
+  if (!isLocalFallbackAllowed()) return [];
   setLocalStorageProjects(projectsData);
   return projectsData;
 };

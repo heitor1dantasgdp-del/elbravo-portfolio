@@ -114,7 +114,7 @@ const NexusCrmPreview: React.FC<{ lang: Language }> = ({ lang }) => (
         </div>
         <span className="font-semibold text-white tracking-wide">Nexus CRM</span>
         <span className="text-[10px] px-1.5 py-0.5 bg-white/5 border border-white/10 text-indigo-400 font-mono-tech uppercase">
-          Enterprise B2B
+          Illustrative workspace
         </span>
       </div>
       <div className="flex items-center gap-2">
@@ -131,9 +131,9 @@ const NexusCrmPreview: React.FC<{ lang: Language }> = ({ lang }) => (
         <div className="text-[10px] text-gray-400 uppercase tracking-widest font-mono-tech">
           {lang === 'pt' ? 'Receita / MRR' : 'Revenue / MRR'}
         </div>
-        <div className="text-sm sm:text-base font-bold text-white mt-0.5 font-display">R$ 148.500</div>
+        <div className="text-sm sm:text-base font-bold text-white mt-0.5 font-display">Example data</div>
         <div className="text-[10px] text-emerald-400 flex items-center gap-0.5 mt-0.5 font-mono-tech">
-          <TrendingUp className="w-2.5 h-2.5" /> +14.2% {lang === 'pt' ? 'vs mês ant.' : 'vs last mo.'}
+          <TrendingUp className="w-2.5 h-2.5" /> {lang === 'pt' ? 'dados ilustrativos' : 'illustrative data'}
         </div>
       </div>
 
@@ -142,16 +142,16 @@ const NexusCrmPreview: React.FC<{ lang: Language }> = ({ lang }) => (
           {lang === 'pt' ? 'Pipeline Ativo' : 'Active Pipeline'}
         </div>
         <div className="text-sm sm:text-base font-bold text-white mt-0.5 font-display">38 {lang === 'pt' ? 'Negócios' : 'Deals'}</div>
-        <div className="text-[10px] text-indigo-400 font-mono-tech">R$ 620.000 {lang === 'pt' ? 'em forecast' : 'in forecast'}</div>
+        <div className="text-[10px] text-indigo-400 font-mono-tech">{lang === 'pt' ? 'dados ilustrativos' : 'illustrative data'}</div>
       </div>
 
       <div className="p-2.5 bg-[#121212] border border-white/10">
         <div className="text-[10px] text-gray-400 uppercase tracking-widest font-mono-tech">
           {lang === 'pt' ? 'Meta Comercial' : 'Sales Target'}
         </div>
-        <div className="text-sm sm:text-base font-bold text-emerald-400 mt-0.5 font-display">82%</div>
+        <div className="text-sm sm:text-base font-bold text-emerald-400 mt-0.5 font-display">Preview</div>
         <div className="w-full bg-white/10 h-1 mt-1.5 overflow-hidden">
-          <div className="bg-emerald-500 h-full w-[82%]" />
+          <div className="bg-emerald-500 h-full w-1/2" />
         </div>
       </div>
     </div>
@@ -312,7 +312,7 @@ const FinancePreview: React.FC<{ lang: Language }> = ({ lang }) => (
         <div className="text-[10px] text-gray-400 uppercase tracking-widest font-mono-tech">
           {lang === 'pt' ? 'Saldo em Caixa' : 'Cash on Hand'}
         </div>
-        <div className="text-sm sm:text-base font-bold text-emerald-400 mt-0.5 font-display">R$ 42.850,00</div>
+        <div className="text-sm sm:text-base font-bold text-emerald-400 mt-0.5 font-display">Example data</div>
         <div className="text-[10px] text-gray-500 font-mono-tech">{lang === 'pt' ? 'Saldo líquido' : 'Net balance'}</div>
       </div>
 
@@ -320,7 +320,7 @@ const FinancePreview: React.FC<{ lang: Language }> = ({ lang }) => (
         <div className="text-[10px] text-gray-400 uppercase tracking-widest font-mono-tech">
           {lang === 'pt' ? 'Taxa de Poupança' : 'Savings Rate'}
         </div>
-        <div className="text-sm sm:text-base font-bold text-white mt-0.5 font-display">34.8%</div>
+        <div className="text-sm sm:text-base font-bold text-white mt-0.5 font-display">Preview</div>
         <div className="text-[10px] text-emerald-400 font-mono-tech">{lang === 'pt' ? 'Meta atingida' : 'Target reached'}</div>
       </div>
 
@@ -328,9 +328,9 @@ const FinancePreview: React.FC<{ lang: Language }> = ({ lang }) => (
         <div className="text-[10px] text-gray-400 uppercase tracking-widest font-mono-tech">
           {lang === 'pt' ? 'Teto de Gastos' : 'Monthly Cap'}
         </div>
-        <div className="text-sm sm:text-base font-bold text-amber-400 mt-0.5 font-display">68% {lang === 'pt' ? 'usado' : 'used'}</div>
+        <div className="text-sm sm:text-base font-bold text-amber-400 mt-0.5 font-display">Example</div>
         <div className="w-full bg-white/10 h-1 mt-1.5 overflow-hidden">
-          <div className="bg-amber-400 h-full w-[68%]" />
+          <div className="bg-amber-400 h-full w-1/2" />
         </div>
       </div>
     </div>
@@ -374,7 +374,7 @@ const ResumeSignalPreview: React.FC<{ lang: Language }> = ({ lang }) => (
       </div>
       <div className="text-[10px] text-emerald-400 flex items-center gap-1 font-mono-tech">
         <Shield className="w-3 h-3" />
-        {lang === 'pt' ? '100% Privado' : '100% Private'}
+        {lang === 'pt' ? 'Privacidade no design' : 'Privacy-minded design'}
       </div>
     </div>
 
@@ -411,7 +411,7 @@ const ResumeSignalPreview: React.FC<{ lang: Language }> = ({ lang }) => (
     </div>
 
     <div className="p-2 bg-[#121212] border border-white/10 text-[10px] text-gray-400 flex items-center justify-between font-mono-tech">
-      <span>{lang === 'pt' ? '92% verbos de ação' : '92% action verbs'}</span>
+      <span>{lang === 'pt' ? 'Verbos de ação' : 'Action verbs'}</span>
       <span className="text-indigo-400 font-medium">{lang === 'pt' ? 'Zero cadastro' : 'No sign-up'}</span>
     </div>
   </div>
@@ -449,7 +449,7 @@ const PortfolioPreview: React.FC<{ lang: Language }> = ({ lang }) => (
         5 {lang === 'pt' ? 'Aplicações Reais' : 'Real Applications'}
       </div>
       <div className="p-2 bg-[#121212] border border-white/10 text-emerald-400 uppercase tracking-wider">
-        100% {lang === 'pt' ? 'Demos Públicas' : 'Public Demos'}
+        {lang === 'pt' ? 'Demos selecionadas' : 'Selected demos'}
       </div>
     </div>
   </div>

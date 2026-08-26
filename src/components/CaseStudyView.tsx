@@ -35,14 +35,14 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
     document.title = projectTitle;
 
     // Update meta description
-    let metaDesc = document.querySelector('meta[name="description"]');
+    const metaDesc = document.querySelector('meta[name="description"]');
     const originalDesc = metaDesc?.getAttribute('content') || '';
     if (metaDesc) {
       metaDesc.setAttribute('content', project.description[lang] || project.tagline[lang]);
     }
 
     // Update OG Title
-    let ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogTitle = document.querySelector('meta[property="og:title"]');
     const originalOgTitle = ogTitle?.getAttribute('content') || '';
     if (ogTitle) {
       ogTitle.setAttribute('content', projectTitle);

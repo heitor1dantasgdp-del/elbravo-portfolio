@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Lock, ShieldCheck, Database, KeyRound, ArrowRight, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
-import { getSupabaseClient, isSupabaseConfigured } from '../../lib/supabase';
+import { getSupabaseClient, isLocalFallbackAllowed, isPortfolioOwner, isSupabaseConfigured } from '../../lib/supabase';
 
 interface AdminLoginProps {
   onSuccess: () => void;
@@ -36,11 +36,18 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess, onExitToSite 
           return;
         }
 
-        if (data.session) {
+        if (data.session && await isPortfolioOwner()) {
           sessionStorage.setItem('el_bravo_admin_auth', 'supabase_authenticated');
           onSuccess();
+        } else {
+          await supabase.auth.signOut();
+          setError('Esta conta não está autorizada como proprietária do portfólio.');
         }
       } else {
+        if (!isLocalFallbackAllowed()) {
+          setError('Supabase must be configured before the production CMS can be used.');
+          return;
+        }
         // Local / Offline fallback mode authentication
         // Allows the developer to authenticate locally during staging/testing
         if (password === 'admin123' || password === 'admin' || password.length >= 6) {

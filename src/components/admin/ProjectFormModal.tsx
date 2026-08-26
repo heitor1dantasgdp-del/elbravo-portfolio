@@ -17,7 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Project, ProjectStatus, ProjectScreenshot, ProjectFeature } from '../../types';
-import { uploadProjectMedia } from '../../lib/supabase';
+import { deleteProjectMedia, uploadProjectMedia } from '../../lib/supabase';
 
 interface ProjectFormModalProps {
   initialProject?: Project | null;
@@ -68,7 +68,8 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const [repositoryUrl, setRepositoryUrl] = useState(initialProject?.repositoryUrl || '');
 
   // Cover Image
-  const [coverImage, setCoverImage] = useState<string>(initialProject?.coverImage || '');
+  const [coverImage, setCoverImage] = useState<string>(initialProject?.coverImagePath || initialProject?.coverImage || '');
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string>(initialProject?.coverImage || '');
 
   // Stack Tags
   const [stackTags, setStackTags] = useState<string[]>(
@@ -78,7 +79,11 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
 
   // Screenshots Array
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>(
-    initialProject?.screenshots || []
+    initialProject?.screenshots.map((shot) => ({
+      ...shot,
+      url: shot.storagePath || shot.url,
+      previewUrl: shot.url,
+    })) || []
   );
 
   // Case Study Sections
@@ -154,10 +159,19 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+      setError('Use uma imagem de até 5 MB.');
+      return;
+    }
     setUploadingCover(true);
     try {
-      const res = await uploadProjectMedia(file, 'covers');
+      const res = await uploadProjectMedia(file, 'covers', slug);
+      if (res.error || !res.url) {
+        setError(res.error || 'Falha no upload da imagem de capa.');
+        return;
+      }
       setCoverImage(res.url);
+      setCoverPreviewUrl(res.previewUrl || res.url);
     } catch (err: any) {
       setError('Falha no upload da imagem de capa.');
     } finally {
@@ -169,18 +183,27 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 10 * 1024 * 1024) {
+      setError('Use uma imagem de até 10 MB.');
+      return;
+    }
     setUploadingScreenshot(true);
     try {
-      const res = await uploadProjectMedia(file, 'screenshots');
+      const res = await uploadProjectMedia(file, 'screenshots', slug);
+      if (res.error || !res.url) {
+        setError(res.error || 'Falha no upload da captura de tela.');
+        return;
+      }
       const newScreenshot: ProjectScreenshot = {
         id: `shot_${Date.now()}`,
         title: { pt: file.name.replace(/\.[^/.]+$/, ''), en: file.name.replace(/\.[^/.]+$/, '') },
         description: { pt: 'Captura de tela da interface.', en: 'Interface preview.' },
         type: 'desktop',
         url: res.url,
+        previewUrl: res.previewUrl,
         altText: `Screenshot de ${name || 'projeto'}`,
       };
-      setScreenshots([...screenshots, newScreenshot]);
+      setScreenshots((current) => [...current, newScreenshot]);
     } catch (err: any) {
       setError('Falha no upload da captura de tela.');
     } finally {
@@ -196,6 +219,26 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     const item = reordered.splice(index, 1)[0];
     reordered.splice(targetIdx, 0, item);
     setScreenshots(reordered);
+  };
+
+  const handleRemoveCover = async () => {
+    const result = await deleteProjectMedia(coverImage);
+    if (!result.success) {
+      setError(result.error || 'Falha ao remover a mídia.');
+      return;
+    }
+    setCoverImage('');
+    setCoverPreviewUrl('');
+  };
+
+  const handleRemoveScreenshot = async (index: number) => {
+    const screenshot = screenshots[index];
+    const result = await deleteProjectMedia(screenshot.storagePath || screenshot.url);
+    if (!result.success) {
+      setError(result.error || 'Falha ao remover a mídia.');
+      return;
+    }
+    setScreenshots((current) => current.filter((_, screenshotIndex) => screenshotIndex !== index));
   };
 
   // Features list management
@@ -313,7 +356,17 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     };
 
     try {
-      await onSave(projectPayload);
+      await onSave({
+        ...projectPayload,
+        coverImagePath: projectPayload.coverImage,
+        screenshots: projectPayload.screenshots.map((shot) => {
+          const persisted = { ...shot };
+          delete persisted.previewUrl;
+          delete persisted.storagePath;
+          persisted.url = shot.storagePath || shot.url;
+          return persisted;
+        }),
+      });
       onClose();
     } catch (err: any) {
       setError(err?.message || 'Erro ao salvar o projeto.');
@@ -629,7 +682,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                   {coverImage && (
                     <button
                       type="button"
-                      onClick={() => setCoverImage('')}
+                      onClick={handleRemoveCover}
                       className="text-xs text-red-400 hover:text-red-300 font-mono-tech cursor-pointer"
                     >
                       Remover Capa
@@ -666,9 +719,9 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                   </div>
 
                   <div className="border border-white/10 rounded-lg h-36 bg-[#070707] flex items-center justify-center overflow-hidden relative">
-                    {coverImage ? (
+                    {coverPreviewUrl || coverImage ? (
                       <img
-                        src={coverImage}
+                        src={coverPreviewUrl || coverImage}
                         alt="Capa Preview"
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
@@ -723,9 +776,9 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                             #{idx + 1}
                           </span>
                           
-                          {shot.url ? (
+                          {shot.previewUrl || shot.url ? (
                             <img
-                              src={shot.url}
+                              src={shot.previewUrl || shot.url}
                               alt={shot.altText || 'Screenshot'}
                               className="w-16 h-12 object-cover rounded border border-white/10 bg-black shrink-0"
                               referrerPolicy="no-referrer"
@@ -783,7 +836,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                           </button>
                           <button
                             type="button"
-                            onClick={() => setScreenshots(screenshots.filter((_, i) => i !== idx))}
+                            onClick={() => handleRemoveScreenshot(idx)}
                             className="p-1.5 bg-red-950/40 hover:bg-red-900/60 rounded text-red-400 cursor-pointer ml-2"
                             title="Remover screenshot"
                           >

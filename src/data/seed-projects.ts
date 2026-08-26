@@ -411,7 +411,7 @@ export const SEED_PROJECTS: Project[] = [
         en: "Job applicants often submit generic resumes lacking the exact technical terminology and keywords requested in job descriptions, leading to automated filtering rejections."
       },
       idea: {
-        pt: "Criar uma ferramenta de diagnóstico instantâneo, sem fricção de cadastro e 100% orientada à privacidade, onde o candidato cola o currículo e a vaga para receber feedback pontual.",
+        pt: "Criar uma ferramenta de diagnóstico instantâneo, sem fricção de cadastro e orientada à privacidade, onde o candidato cola o currículo e a vaga para receber feedback pontual.",
         en: "Build a friction-free, privacy-first diagnostic tool where applicants paste their resume and job posting to receive instant, actionable matching feedback."
       },
       solution: {
@@ -440,7 +440,7 @@ export const SEED_PROJECTS: Project[] = [
           desc: { pt: "Guia prático de ajustes imediatos para aumentar a compatibilidade com a vaga.", en: "Concrete step-by-step suggestions to boost alignment prior to application." }
         },
         {
-          title: { pt: "Privacidade Total & Sem Cadastro", en: "100% Private & No Sign-up" },
+          title: { pt: "Privacidade & Sem Cadastro", en: "Privacy-minded & No Sign-up" },
           desc: { pt: "Processamento realizado no próprio navegador sem envio do texto para bancos de dados externos.", en: "Processed locally inside the client browser without sending personal data to external databases." }
         }
       ],

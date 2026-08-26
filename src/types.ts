@@ -33,6 +33,10 @@ export interface ProjectScreenshot {
   alt?: LocalizedString;
   caption?: LocalizedString;
   displayOrder?: number;
+  /** Client-only signed preview URL; never persist this field. */
+  previewUrl?: string;
+  /** Client-only persisted Storage path marker. */
+  storagePath?: string;
 }
 
 export interface ProjectCaseStudy {
@@ -63,6 +67,8 @@ export interface Project {
   featured: boolean;
   published: boolean;
   coverImage?: string;
+  /** Client-only persisted Storage path marker for signed URL hydration. */
+  coverImagePath?: string;
   stack: string[];
   caseStudy: ProjectCaseStudy;
   demoCredentials?: DemoCredentials;

@@ -44,23 +44,40 @@ CREATE TABLE IF NOT EXISTS public.projects (
 -- 2. Habilitar RLS
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 
+CREATE TABLE IF NOT EXISTS public.portfolio_admins (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE
+);
+ALTER TABLE public.portfolio_admins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins can read own membership"
+  ON public.portfolio_admins FOR SELECT TO authenticated
+  USING (user_id = auth.uid());
+
 CREATE POLICY "Allow public read access to published projects"
-  ON public.projects FOR SELECT USING (published = true);
+  ON public.projects FOR SELECT TO anon, authenticated USING (published = true);
 
 CREATE POLICY "Allow full access to authenticated admins"
-  ON public.projects FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  ON public.projects FOR ALL TO authenticated
+  USING (EXISTS (SELECT 1 FROM public.portfolio_admins WHERE user_id = auth.uid()))
+  WITH CHECK (EXISTS (SELECT 1 FROM public.portfolio_admins WHERE user_id = auth.uid()));
 
 -- 3. Storage Bucket para Imagens
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('project-media', 'project-media', true)
+VALUES ('project-media', 'project-media', false)
 ON CONFLICT (id) DO NOTHING;
+UPDATE storage.buckets SET public = false WHERE id = 'project-media';
 
-CREATE POLICY "Allow public to view project media"
-  ON storage.objects FOR SELECT USING (bucket_id = 'project-media');
+CREATE POLICY "Allow published project media read"
+  ON storage.objects FOR SELECT TO anon, authenticated
+  USING (bucket_id = 'project-media' AND EXISTS (
+    SELECT 1 FROM public.projects
+    WHERE projects.slug = split_part(storage.objects.name, '/', 2)
+      AND projects.published = true
+  ));
 
 CREATE POLICY "Allow authenticated users to manage project media"
   ON storage.objects FOR ALL TO authenticated
-  USING (bucket_id = 'project-media') WITH CHECK (bucket_id = 'project-media');`;
+  USING (bucket_id = 'project-media' AND EXISTS (SELECT 1 FROM public.portfolio_admins WHERE user_id = auth.uid()))
+  WITH CHECK (bucket_id = 'project-media' AND EXISTS (SELECT 1 FROM public.portfolio_admins WHERE user_id = auth.uid()));`;
 
   const handleCopyEnv = () => {
     navigator.clipboard.writeText(envSample);

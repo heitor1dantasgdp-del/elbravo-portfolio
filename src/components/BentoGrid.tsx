@@ -74,7 +74,7 @@ export const BentoGrid: React.FC<BentoGridProps> = ({ lang, projects, onOpenCase
             </div>
           </div>
 
-          {/* Card 2: 100% Live Demos (Medium Tile) */}
+          {/* Card 2: Interactive demos (Medium Tile) */}
           <div className="md:col-span-5 p-6 sm:p-8 bg-[#0A0A0A] border border-white/10 hover:border-white/25 transition-all flex flex-col justify-between text-left shadow-2xl">
             <div className="space-y-4">
               <div className="w-10 h-10 bg-white/5 border border-white/10 flex items-center justify-center text-emerald-400">
@@ -100,7 +100,7 @@ export const BentoGrid: React.FC<BentoGridProps> = ({ lang, projects, onOpenCase
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Vercel Deployments
               </span>
-              <span className="uppercase tracking-widest text-[10px]">All Active</span>
+              <span className="uppercase tracking-widest text-[10px]">Selected demos</span>
             </div>
           </div>
 

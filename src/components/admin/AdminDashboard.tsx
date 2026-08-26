@@ -79,7 +79,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const handleSaveProject = async (project: Project) => {
-    await saveProject(project);
+    const result = await saveProject(project);
+    if (!result.success) {
+      showFeedback(`Falha ao salvar: ${result.error || 'erro desconhecido'}`);
+      return;
+    }
     showFeedback(`Projeto "${project.name}" salvo com sucesso!`);
     setEditingProject(null);
     setIsCreatingNew(false);

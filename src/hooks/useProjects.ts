@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Project } from '../types';
 import {
   getAllProjects,
-  getPublishedProjects,
   saveProject as repoSaveProject,
   deleteProject as repoDeleteProject,
   reorderProjects as repoReorderProjects,

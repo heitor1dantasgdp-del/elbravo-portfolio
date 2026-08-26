@@ -110,7 +110,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl font-bold text-emerald-400 font-display">100%</div>
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-400 font-display">DEMO</div>
                 <div className="text-[10px] uppercase tracking-widest text-gray-500 font-mono-tech">
                   {lang === 'pt' ? 'DEMOS ONLINE' : 'LIVE DEMOS'}
                 </div>
