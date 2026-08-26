@@ -7,11 +7,16 @@
     --font-mono: 'JetBrains Mono', monospace;
   }
 
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: #050505;
     color: #E5E5E5;
-    overflow-x: hidden;
   }
 }
 

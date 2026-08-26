@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-medium uppercase tracking-widest text-gray-400">
+        <nav className="hidden xl:flex items-center gap-8 text-xs font-medium uppercase tracking-widest text-gray-400">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right Action Group: Language Switcher & Contact Button */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden xl:flex items-center gap-6">
           {/* Language Selector */}
           <div className="flex items-center border-l border-white/20 pl-6 gap-3 text-xs font-mono-tech uppercase tracking-widest">
             <button
@@ -129,7 +129,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Mobile Controls (Lang + Menu Toggle) */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex xl:hidden items-center gap-2">
           <button
             id="mobile-lang-toggle-btn"
             onClick={onToggleLang}
@@ -157,7 +157,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {mobileMenuOpen && (
         <div
           id="mobile-nav-drawer"
-          className="md:hidden bg-[#050505]/95 backdrop-blur-xl border-b border-white/10 px-4 pt-3 pb-6 space-y-2 mt-2"
+          className="xl:hidden bg-[#050505]/95 backdrop-blur-xl border-b border-white/10 px-4 pt-3 pb-6 space-y-2 mt-2"
         >
           {navItems.map((item) => (
             <button
