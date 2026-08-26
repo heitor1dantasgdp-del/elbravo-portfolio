@@ -55,4 +55,4 @@ The completed UI run deleted its test project and media. A final owner-authentic
 
 ## Manual-only checks remaining
 
-Remaining manual-only checks: oversized-file validation, unsaved-changes behavior (not implemented), loading/error states under slow network, forced upload/save/network failure messaging, full keyboard traversal through every modal control, and visual review of mobile admin spacing. Run these before production migration or Vercel Preview approval.
+Remaining manual-only checks: oversized-file validation, unsaved-changes behavior (not implemented), loading/error states under slow network, forced upload/save/network failure messaging, and full keyboard traversal through every modal control. Admin mobile dashboard/editor smoke passed at 375px and 430px. Run the remaining checks before production migration or Vercel Preview approval.

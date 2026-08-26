@@ -146,7 +146,7 @@ Run after setting `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_OWNER_EMAIL`, `
 npm run test:supabase
 ```
 
-The harness creates temporary published/draft fixtures in the configured disposable project and checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, publish/unpublish, and owner media upload/remove. On 2026-08-26 it completed 10/10 PASS against the disposable Supabase project. A separate `npm run test:routes` checks the SPA shell for all required paths. The CMS browser E2E completed 21/21; only the manual-only checks listed in `CMS_E2E_REPORT.md` remain.
+The harness creates temporary published/draft fixtures in the configured disposable project and checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, publish/unpublish, and owner media upload/remove. On 2026-08-26 it completed 10/10 PASS against the disposable Supabase project. A separate `npm run test:routes` checks the SPA shell for all required paths. The CMS browser E2E completed 23/23; only the manual-only checks listed in `CMS_E2E_REPORT.md` remain.
 
 `SUPABASE_TEST_SETUP.md` documents the disposable-project setup, safe variables, expected PASS output, and browser checks.
 
@@ -162,8 +162,8 @@ The harness creates temporary published/draft fixtures in the configured disposa
 - `npm.cmd run dev`: started successfully with the ESM-safe Vite config; local `/` returned HTTP 200 with the application root.
 - `npm.cmd run test:routes`: passed 7/7 SPA shell route checks against the local server.
 - `npm.cmd run test:responsive`: passed 27/27 viewport, focus, and label checks.
-- `npm.cmd run test:cms`: passed 21/21 CMS browser scenarios; final cleanup confirmed zero E2E project rows and zero remaining orphan media.
-- Browser admin QA: `npm run test:cms` passed 21/21 against the disposable project, including draft CRUD, multiple media upload/reorder/remove, authenticated preview, PT/EN, duplicate slug rejection, invalid image rejection, publish/unpublish, public rendering, deletion, logout, and mobile editor smoke checks. Remaining manual-only scenarios are listed in `CMS_E2E_REPORT.md`.
+- `npm.cmd run test:cms`: passed 23/23 CMS browser scenarios; final cleanup confirmed zero E2E project rows and zero remaining orphan media.
+- Browser admin QA: `npm run test:cms` passed 23/23 against the disposable project, including draft CRUD, multiple media upload/reorder/remove, authenticated preview, PT/EN, duplicate slug rejection, invalid image rejection, publish/unpublish, public rendering, deletion, logout, and mobile editor smoke checks at 375px/430px. Remaining manual-only scenarios are listed in `CMS_E2E_REPORT.md`.
 - `CMS_E2E_REPORT.md` records the completed browser scenarios, cleanup confirmation, and remaining manual-only checks.
 - No live database access, schema execution, or deployment performed.
 
