@@ -36,7 +36,7 @@ Repository: `jeysondantasgdp-lang/elbravo-portfolio`
 
 ## Remaining blockers
 
-- No real Supabase integration was run by design; RLS/Storage behavior remains unverified.
+- Disposable Supabase integration and Storage behavior were verified by the 10/10 harness; production Supabase remains untouched.
 - The private-bucket SQL is pending execution and review.
 - Host routing, mobile/desktop behavior, and authenticated draft preview require real environment/browser verification.
 - No per-project server-rendered SEO exists because this remains a Vite SPA.
@@ -84,7 +84,7 @@ Repository: `jeysondantasgdp-lang/elbravo-portfolio`
 | Publish/unpublish | Implemented through `published`. |
 | Featured/unfeatured | Implemented through `featured`. |
 | Draft preview | Implemented inside authenticated `AdminRouter`; needs real Auth/RLS/browser test. |
-| Media/screenshots | Implemented with private Storage path markers and signed URLs; needs real Storage test. |
+| Media/screenshots | Implemented with private Storage path markers and signed URLs; disposable Storage test passed. |
 | Reset defaults | Local development reset only; does not reset Supabase. |
 
 ## Supabase/RLS findings
@@ -146,7 +146,7 @@ Run after setting `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_OWNER_EMAIL`, `
 npm run test:supabase
 ```
 
-The harness creates temporary published/draft fixtures in the configured disposable project and checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, publish/unpublish, and owner media upload/remove. On 2026-08-26 it completed 10/10 PASS against the disposable Supabase project. A separate `npm run test:routes` checks the SPA shell for all required paths. Browser rendering, mobile/desktop, and preview-flow checks remain manual/e2e work.
+The harness creates temporary published/draft fixtures in the configured disposable project and checks anonymous published/draft reads, anonymous project insert/update/delete denial, anonymous media upload/remove/signed-URL denial, owner CRUD, publish/unpublish, and owner media upload/remove. On 2026-08-26 it completed 10/10 PASS against the disposable Supabase project. A separate `npm run test:routes` checks the SPA shell for all required paths. The CMS browser E2E completed 21/21; only the manual-only checks listed in `CMS_E2E_REPORT.md` remain.
 
 `SUPABASE_TEST_SETUP.md` documents the disposable-project setup, safe variables, expected PASS output, and browser checks.
 
@@ -162,8 +162,8 @@ The harness creates temporary published/draft fixtures in the configured disposa
 - `npm.cmd run dev`: started successfully with the ESM-safe Vite config; local `/` returned HTTP 200 with the application root.
 - `npm.cmd run test:routes`: passed 7/7 SPA shell route checks against the local server.
 - `npm.cmd run test:responsive`: passed 27/27 viewport, focus, and label checks.
-- `npm.cmd run test:cms`: passed 15/15 CMS browser scenarios; final cleanup confirmed zero E2E project rows and removed 8 orphaned E2E media objects.
-- Browser admin QA: `npm run test:cms` passed 15/15 against the disposable project, including draft CRUD, multiple media upload/reorder/remove, authenticated preview, publish/unpublish, public rendering, deletion, and logout. Remaining manual-only scenarios are listed in `CMS_E2E_REPORT.md`.
+- `npm.cmd run test:cms`: passed 21/21 CMS browser scenarios; final cleanup confirmed zero E2E project rows and zero remaining orphan media.
+- Browser admin QA: `npm run test:cms` passed 21/21 against the disposable project, including draft CRUD, multiple media upload/reorder/remove, authenticated preview, PT/EN, duplicate slug rejection, invalid image rejection, publish/unpublish, public rendering, deletion, logout, and mobile editor smoke checks. Remaining manual-only scenarios are listed in `CMS_E2E_REPORT.md`.
 - `CMS_E2E_REPORT.md` records the completed browser scenarios, cleanup confirmation, and remaining manual-only checks.
 - No live database access, schema execution, or deployment performed.
 
@@ -186,7 +186,7 @@ The SPA updates title/description/OG title/description client-side. It cannot pr
 
 ## Deployment readiness
 
-**Not ready for production.** The code-level blockers are addressed, but the pending SQL, real RLS/Storage verification, Vercel preview, browser checks, and final media/copy review remain required.
+**Not ready for production.** The code-level blockers and disposable integration checks are addressed, but production SQL execution, Vercel preview, final media/content review, and the remaining manual-only QA checks remain required.
 
 ## Recommended next step
 

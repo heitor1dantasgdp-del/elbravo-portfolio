@@ -133,3 +133,21 @@ export const deleteProjectMedia = async (value?: string): Promise<{ success: boo
   const { error } = await supabase.storage.from('project-media').remove([path]);
   return error ? { success: false, error: error.message } : { success: true };
 };
+
+export const deleteProjectMediaFolder = async (projectSlug: string): Promise<{ success: boolean; error?: string }> => {
+  const supabase = getSupabaseClient();
+  if (!supabase) return { success: false, error: 'Supabase is not configured.' };
+
+  for (const folder of ['covers', 'screenshots'] as const) {
+    const prefix = `projects/${projectSlug}/${folder}`;
+    const { data, error } = await supabase.storage.from('project-media').list(prefix, { limit: 1000 });
+    if (error) return { success: false, error: error.message };
+    const paths = (data || []).map((file) => `${prefix}/${file.name}`);
+    if (paths.length > 0) {
+      const { error: removeError } = await supabase.storage.from('project-media').remove(paths);
+      if (removeError) return { success: false, error: removeError.message };
+    }
+  }
+
+  return { success: true };
+};

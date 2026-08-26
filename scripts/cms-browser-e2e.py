@@ -19,6 +19,7 @@ slug = f'codex-cms-e2e-{int(time.time())}'
 name = 'Codex CMS E2E'
 fixture = str(Path('scripts/qa-fixture.svg').resolve())
 fixture_two = str(Path('scripts/qa-fixture-two.svg').resolve())
+invalid_fixture = str(Path('scripts/qa-invalid.txt').resolve())
 results = []
 
 
@@ -73,6 +74,16 @@ with sync_playwright() as p:
     page.wait_for_timeout(2500)
     check('draft project is created', lambda: page.get_by_text(name, exact=True).wait_for())
 
+    page.get_by_role('button', name='CRIAR NOVO PROJETO').click()
+    page.locator('input[placeholder="Ex: Nexus CRM"]').fill('Duplicate slug attempt')
+    page.locator('input[placeholder="ex: nexus-crm"]').fill(slug)
+    page.locator('input[type="checkbox"]').first.uncheck()
+    page.get_by_role('button', name='CRIAR & PUBLICAR').click()
+    page.wait_for_timeout(1200)
+    check('duplicate slug is rejected cleanly', lambda: page.get_by_text('Este slug já está em uso. Escolha outro slug.', exact=True).wait_for())
+    page.get_by_role('button', name='Cancelar').click()
+    page.wait_for_timeout(500)
+
     page.goto(f'{base}/projects/{slug}', wait_until='domcontentloaded')
     page.wait_for_timeout(900)
     check('anonymous draft route is denied', lambda: page.locator('h1').filter(has_text=re.compile('Unavailable|Indispon', re.I)).wait_for())
@@ -111,6 +122,22 @@ with sync_playwright() as p:
     page.wait_for_timeout(1000)
     check('published project renders publicly', lambda: page.get_by_role('heading', name=name).wait_for())
     check('published project contains PT content', lambda: page.get_by_text('Resumo PT do projeto de QA.').wait_for())
+    page.get_by_role('button', name='EN', exact=True).first.click()
+    page.wait_for_timeout(500)
+    check('published case study switches to EN', lambda: page.get_by_text('QA project summary in English.').wait_for())
+    page.get_by_role('button', name='PT', exact=True).first.click()
+
+    page.goto(f'{base}/admin', wait_until='domcontentloaded')
+    page.wait_for_timeout(1200)
+    page.get_by_role('button', name='Editar projeto').last.click()
+    page.wait_for_timeout(700)
+    page.locator('input[placeholder="Ex: Nexus CRM"]').fill('Codex CMS E2E Updated')
+    page.get_by_role('button', name=re.compile('SALVAR', re.I)).click()
+    page.wait_for_timeout(1800)
+    name = 'Codex CMS E2E Updated'
+    page.goto(f'{base}/projects/{slug}', wait_until='domcontentloaded')
+    page.wait_for_timeout(900)
+    check('published edit is visible publicly', lambda: page.get_by_role('heading', name=name).wait_for())
 
     page.goto(f'{base}/admin', wait_until='domcontentloaded')
     page.wait_for_timeout(1200)
@@ -123,6 +150,27 @@ with sync_playwright() as p:
     # Delete through the dashboard, confirming the modal.
     page.goto(f'{base}/admin', wait_until='domcontentloaded')
     page.wait_for_timeout(1200)
+    mobile = context.new_page()
+    mobile.set_viewport_size({'width': 375, 'height': 900})
+    mobile.goto(f'{base}/admin', wait_until='domcontentloaded')
+    mobile.wait_for_timeout(1200)
+    check('admin mobile dashboard has no horizontal scroll', lambda: mobile.evaluate('() => { window.scrollTo(1000, 0); return window.scrollX === 0; }'))
+    mobile.get_by_role('button', name='CRIAR NOVO PROJETO').click()
+    mobile.wait_for_timeout(700)
+    mobile.get_by_role('button', name=re.compile(r'^2\.', re.I)).click()
+    check('admin mobile media editor has no horizontal scroll', lambda: mobile.evaluate('() => { window.scrollTo(1000, 0); return window.scrollX === 0; }'))
+    mobile.get_by_role('button', name='Cancelar').click()
+    mobile.close()
+
+    page.get_by_role('button', name='Editar projeto').last.click()
+    page.wait_for_timeout(600)
+    page.get_by_role('button', name=re.compile(r'^2\.', re.I)).click()
+    page.locator('input[type="file"]').nth(0).set_input_files(invalid_fixture)
+    page.wait_for_timeout(400)
+    check('invalid image type shows a clear error', lambda: page.get_by_text(re.compile('Use uma imagem', re.I)).wait_for())
+    page.get_by_role('button', name='Cancelar').click()
+    page.wait_for_timeout(500)
+
     page.get_by_role('button', name='Excluir projeto').last.click()
     page.get_by_role('button', name='Sim, Excluir').click()
     page.wait_for_timeout(1500)

@@ -80,7 +80,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const result = await saveProject(project);
     if (!result.success) {
       showFeedback(`Falha ao salvar: ${result.error || 'erro desconhecido'}`);
-      return;
+      throw new Error(result.error || 'Falha ao salvar o projeto.');
     }
     showFeedback(`Projeto "${project.name}" salvo com sucesso!`);
     setEditingProject(null);

@@ -9,7 +9,7 @@
 - [x] Run `npm run test:supabase` and record every PASS/FAIL (10/10 PASS).
 - [x] Run `npm run test:responsive` at 375, 430, 768, 1024 and 1440px (27/27 PASS).
 - [ ] Run `python scripts/browser-cms-check.py` and `npm run test:routes` against a test/preview URL.
-- [x] Run `npm run test:cms` against the disposable project (15/15 PASS; E2E media cleanup confirmed).
+- [x] Run `npm run test:cms` against the disposable project (21/21 PASS; E2E media cleanup confirmed).
 - [ ] Resolve every failure before copying the exact approved SQL/configuration to production.
 
 ## 1. Production Supabase project

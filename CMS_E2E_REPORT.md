@@ -27,16 +27,17 @@ Environment: local Vite server + disposable Supabase project
 | Unpublish removes public access | PASS |
 | Delete test project | PASS |
 | Logout and protected admin route | PASS |
-| Public EN switch on case study | NOT VERIFIED |
-| Published project edit reflected publicly | NOT VERIFIED |
-| Invalid image-type validation | NOT VERIFIED |
-| Duplicate slug rejection | NOT VERIFIED |
+| Public EN switch on case study | PASS |
+| Published project edit reflected publicly | PASS |
+| Invalid image-type validation | PASS |
+| Duplicate slug rejection | PASS |
 | Unsaved-changes warning | NOT IMPLEMENTED/NOT VERIFIED |
 
 ## Issues found
 
 - The first browser runner used brittle text selectors and was removed.
 - The final runner completed the draft/media/preview flow after replacing brittle selectors with explicit role/label/title selectors and waits.
+- Project deletion originally left Storage objects orphaned; the repository now removes project media before deleting the database row.
 - The application has one intentional ESLint warning for the defensive database-row mapper and a Vite bundle-size warning.
 
 ## Fixes applied
@@ -45,12 +46,13 @@ Environment: local Vite server + disposable Supabase project
 - Added `scripts/qa-fixture.svg` and `scripts/qa-fixture-two.svg` as small non-production upload fixtures.
 - Added `npm run test:cms` and `npm run typecheck` scripts.
 - Added explicit production Supabase and Vercel deployment procedures.
+- Project deletion now cleans the private Storage project folders before removing the project row.
 - No production database, DNS record, domain connection, or deployment was changed.
 
 ## Cleanup confirmation
 
-The completed UI run deleted its test project. A final owner-authenticated Storage check removed 8 orphaned E2E media objects; the final database check reported `remaining_rows=0`. No test content remains under the E2E prefix.
+The completed UI run deleted its test project and media. A final owner-authenticated check reported `remaining_rows=0` and `remaining_media=0`. No test content remains under the E2E prefix.
 
 ## Manual-only checks remaining
 
-Remaining manual-only checks: PT/EN switch on the case study, published edit reflection, invalid file validation, duplicate slug behavior, unsaved-changes behavior (not implemented), loading/error states under slow network, full keyboard traversal through every modal control, and mobile admin layout. Run these before production migration or Vercel Preview approval.
+Remaining manual-only checks: oversized-file validation, unsaved-changes behavior (not implemented), loading/error states under slow network, forced upload/save/network failure messaging, full keyboard traversal through every modal control, and visual review of mobile admin spacing. Run these before production migration or Vercel Preview approval.

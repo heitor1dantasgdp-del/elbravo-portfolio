@@ -1,7 +1,7 @@
 import { Project } from '../types';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { projectsData } from '../data/projects';
-import { getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
+import { deleteProjectMediaFolder, getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
 
 const STORAGE_KEY = 'el_bravo_portfolio_projects_v2';
 const PROJECTS_CHANGE_EVENT = 'el_bravo_projects_updated';
@@ -192,14 +192,16 @@ export const saveProject = async (project: Project): Promise<{ success: boolean;
   if (supabase && isSupabaseConfigured()) {
     try {
       const dbRow = mapProjectToDbRow(toPersistableProject(normalized));
-      const { data, error } = await supabase
-        .from('projects')
-        .upsert(dbRow, { onConflict: 'slug' })
-        .select()
-        .single();
+      const query = project.id
+        ? supabase.from('projects').update(dbRow).eq('id', normalized.id)
+        : supabase.from('projects').insert(dbRow);
+      const { data, error } = await query.select().single();
 
       if (error) {
         console.error('Supabase save error:', error);
+        if (error.code === '23505') {
+          return { success: false, error: 'Este slug já está em uso. Escolha outro slug.' };
+        }
         if (isLocalFallbackAllowed()) {
           saveToLocalStorage(normalized);
           return { success: true, project: normalized, error: `Saved locally (Supabase: ${error.message})` };
@@ -254,6 +256,17 @@ export const deleteProject = async (idOrSlug: string): Promise<{ success: boolea
 
   if (supabase && isSupabaseConfigured()) {
     try {
+      const { data: target, error: lookupError } = await supabase
+        .from('projects')
+        .select('slug')
+        .or(`id.eq.${idOrSlug},slug.eq.${idOrSlug}`)
+        .maybeSingle();
+      if (lookupError) return { success: false, error: lookupError.message };
+      if (target?.slug) {
+        const mediaResult = await deleteProjectMediaFolder(target.slug);
+        if (!mediaResult.success) return mediaResult;
+      }
+
       const { error } = await supabase
         .from('projects')
         .delete()
