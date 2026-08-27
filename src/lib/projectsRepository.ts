@@ -2,37 +2,13 @@ import { Project } from '../types';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { projectsData } from '../data/projects';
 import { deleteProjectMediaFolder, getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
+import { normalizeProjectRecord } from './projectNormalization';
 
 const STORAGE_KEY = 'el_bravo_portfolio_projects_v2';
 const PROJECTS_CHANGE_EVENT = 'el_bravo_projects_updated';
 
 // Helper to normalize and map DB row to Project interface
-const mapDbRowToProject = (row: any): Project => {
-  return {
-    id: row.id,
-    slug: row.slug,
-    orderNumber: row.order_number || String(row.display_order || '01').padStart(2, '0'),
-    displayOrder: row.display_order ?? 1,
-    name: row.name,
-    category: typeof row.category === 'string' ? JSON.parse(row.category) : row.category,
-    status: row.status,
-    statusNote: typeof row.status_note === 'string' ? JSON.parse(row.status_note) : row.status_note,
-    tagline: typeof row.tagline === 'string' ? JSON.parse(row.tagline) : row.tagline,
-    description: typeof row.description === 'string' ? JSON.parse(row.description) : row.description,
-    demoUrl: row.demo_url || '',
-    repositoryUrl: row.repository_url || null,
-    featured: Boolean(row.featured),
-    published: Boolean(row.published),
-    coverImage: row.cover_image || undefined,
-    stack: Array.isArray(row.stack) ? row.stack : (typeof row.stack === 'string' ? JSON.parse(row.stack) : []),
-    caseStudy: typeof row.case_study === 'string' ? JSON.parse(row.case_study) : row.case_study,
-    demoCredentials: typeof row.demo_credentials === 'string' ? JSON.parse(row.demo_credentials) : row.demo_credentials,
-    lastUpdated: row.last_updated || '2026',
-    createdAt: row.created_at || new Date().toISOString(),
-    updatedAt: row.updated_at || new Date().toISOString(),
-    screenshots: Array.isArray(row.screenshots) ? row.screenshots : (typeof row.screenshots === 'string' ? JSON.parse(row.screenshots) : []),
-  };
-};
+const mapDbRowToProject = (row: unknown): Project => normalizeProjectRecord(row);
 
 // Helper to map Project interface to DB row
 const mapProjectToDbRow = (project: Project): Record<string, unknown> => {

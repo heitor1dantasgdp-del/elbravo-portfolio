@@ -27,6 +27,7 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
   const [copiedPassword, setCopiedPassword] = useState(false);
   const t = i18n[lang].caseStudy;
   const statusLabels = i18n[lang].statusTag;
+  const hasText = (value: { pt: string; en: string }) => Boolean(value.pt.trim() || value.en.trim());
 
   // Dynamic SEO metadata per project
   useEffect(() => {
@@ -57,7 +58,9 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
 
   // Find next project
   const currentIndex = allProjects.findIndex((p) => p.slug === project.slug);
-  const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
+  const nextProject = allProjects.length > 1
+    ? allProjects[(currentIndex + 1) % allProjects.length]
+    : undefined;
 
   const handleCopyEmail = () => {
     if (project.demoCredentials?.email) {
@@ -262,37 +265,39 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
         </section>
 
         {/* Problem, Idea & Solution Section */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
+        {(hasText(project.caseStudy.problem) || hasText(project.caseStudy.idea) || hasText(project.caseStudy.solution)) && (
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {hasText(project.caseStudy.problem) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
             <div className="text-xs font-mono-tech font-bold text-rose-400 uppercase tracking-widest">
               {t.theProblem}
             </div>
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.problem[lang]}
             </p>
-          </div>
+          </div>}
 
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
+          {hasText(project.caseStudy.idea) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
             <div className="text-xs font-mono-tech font-bold text-amber-400 uppercase tracking-widest">
               {t.theIdea}
             </div>
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.idea[lang]}
             </p>
-          </div>
+          </div>}
 
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
+          {hasText(project.caseStudy.solution) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-3 shadow-2xl">
             <div className="text-xs font-mono-tech font-bold text-emerald-400 uppercase tracking-widest">
               {t.theSolution}
             </div>
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.solution[lang]}
             </p>
-          </div>
+          </div>}
         </section>
+        )}
 
         {/* Implemented Features Grid */}
-        <section className="space-y-6">
+        {project.caseStudy.features.length > 0 && <section className="space-y-6">
           <div className="space-y-1">
             <div className="text-xs font-mono-tech text-indigo-400 uppercase tracking-widest font-bold">
               {t.coreFeatures}
@@ -320,7 +325,7 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
               </div>
             ))}
           </div>
-        </section>
+        </section>}
 
         {/* Roles Simulation (If applicable, e.g. AgendaPro) */}
         {project.caseStudy.roles && project.caseStudy.roles.length > 0 && (
@@ -339,7 +344,7 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
         )}
 
         {/* Tech Stack */}
-        <section className="space-y-3">
+        {project.stack.length > 0 && <section className="space-y-3">
           <div className="text-xs font-mono-tech text-indigo-400 uppercase tracking-widest font-bold">
             {t.techUsed}
           </div>
@@ -353,12 +358,13 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
               </span>
             ))}
           </div>
-        </section>
+        </section>}
 
         {/* Learnings, Challenges, Limitations & Next Steps */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {(hasText(project.caseStudy.learning) || hasText(project.caseStudy.challenges) || hasText(project.caseStudy.limitations) || hasText(project.caseStudy.nextSteps)) && (
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Learning */}
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
+          {hasText(project.caseStudy.learning) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
             <div className="flex items-center gap-2 text-xs font-mono-tech text-indigo-400 font-bold uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5" />
               <span>{t.whatImLearning}</span>
@@ -366,10 +372,10 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.learning[lang]}
             </p>
-          </div>
+          </div>}
 
           {/* Challenges */}
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
+          {hasText(project.caseStudy.challenges) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
             <div className="flex items-center gap-2 text-xs font-mono-tech text-amber-400 font-bold uppercase tracking-widest">
               <Wrench className="w-3.5 h-3.5" />
               <span>{t.challengesFaced}</span>
@@ -377,10 +383,10 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.challenges[lang]}
             </p>
-          </div>
+          </div>}
 
           {/* Limitations (Honest & Transparent) */}
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
+          {hasText(project.caseStudy.limitations) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
             <div className="flex items-center gap-2 text-xs font-mono-tech text-rose-400 font-bold uppercase tracking-widest">
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>{t.currentLimitations}</span>
@@ -388,10 +394,10 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.limitations[lang]}
             </p>
-          </div>
+          </div>}
 
           {/* Next Steps */}
-          <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
+          {hasText(project.caseStudy.nextSteps) && <div className="p-6 bg-[#0A0A0A] border border-white/10 space-y-2.5 shadow-2xl">
             <div className="flex items-center gap-2 text-xs font-mono-tech text-emerald-400 font-bold uppercase tracking-widest">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>{t.nextStepsTitle}</span>
@@ -399,8 +405,9 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
               {project.caseStudy.nextSteps[lang]}
             </p>
-          </div>
+          </div>}
         </section>
+        )}
 
         {/* Bottom Navigation: Next Project / Return */}
         <footer className="pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -411,14 +418,14 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
             {t.backButton}
           </button>
 
-          <button
+          {nextProject && <button
             id="next-project-btn"
             onClick={() => onSelectProject(nextProject.slug)}
             className="w-full sm:w-auto px-6 py-3 bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
           >
             <span>{lang === 'pt' ? `Próximo Projeto: ${nextProject.name}` : `Next Project: ${nextProject.name}`}</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </button>}
         </footer>
 
       </div>

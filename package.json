@@ -13,6 +13,7 @@
     "test:routes": "node scripts/route-smoke-check.mjs",
     "test:responsive": "python scripts/responsive-a11y-check.py",
     "test:cms": "python scripts/cms-browser-e2e.py",
+    "test:project": "python scripts/project-regression-check.py",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

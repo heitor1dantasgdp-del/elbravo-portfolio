@@ -8,7 +8,7 @@ import { ProjectBrowserMockup } from './ProjectBrowserMockup';
 interface HeroProps {
   lang: Language;
   featuredProject: Project;
-  secondaryProject: Project;
+  secondaryProject?: Project;
   onExploreProjects: () => void;
   onAboutClick: () => void;
   onContactClick: () => void;
@@ -164,18 +164,20 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
 
                 {/* Overlapping Secondary Card (AgendaPro teaser) */}
-                <div 
-                  className="p-2.5 px-4 bg-[#111111] border border-white/10 hover:border-white/30 transition-all cursor-pointer shadow-xl flex items-center gap-3 group/sub"
-                  onClick={() => onOpenCaseStudy(secondaryProject.slug)}
-                >
-                  <div className="text-left">
-                    <span className="text-[10px] font-mono-tech text-gray-500 uppercase tracking-widest">NEXT</span>
-                    <div className="text-xs font-semibold text-white group-hover/sub:text-indigo-300 transition-colors">
-                      {secondaryProject.name}
+                {secondaryProject && (
+                  <div
+                    className="p-2.5 px-4 bg-[#111111] border border-white/10 hover:border-white/30 transition-all cursor-pointer shadow-xl flex items-center gap-3 group/sub"
+                    onClick={() => onOpenCaseStudy(secondaryProject.slug)}
+                  >
+                    <div className="text-left">
+                      <span className="text-[10px] font-mono-tech text-gray-500 uppercase tracking-widest">NEXT</span>
+                      <div className="text-xs font-semibold text-white group-hover/sub:text-indigo-300 transition-colors">
+                        {secondaryProject.name}
+                      </div>
                     </div>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
                   </div>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
-                </div>
+                )}
               </div>
             </div>
 
