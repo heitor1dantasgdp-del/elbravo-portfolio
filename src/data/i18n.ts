@@ -7,6 +7,7 @@ export const i18n = {
       process: "Como Construo",
       about: "Sobre",
       skills: "Tecnologias",
+      resume: "Currículo",
       contact: "Contato",
       langSwitch: "Mudar para Inglês"
     },
@@ -156,6 +157,7 @@ export const i18n = {
       process: "How I Build",
       about: "About",
       skills: "Tech Stack",
+      resume: "Resume",
       contact: "Contact",
       langSwitch: "Switch to Portuguese"
     },

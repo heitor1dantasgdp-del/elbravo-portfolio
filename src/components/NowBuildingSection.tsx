@@ -88,15 +88,17 @@ export const NowBuildingSection: React.FC<NowBuildingProps> = ({
                   <span>→</span>
                 </button>
 
-                <a
-                  href={project.demoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-white flex items-center gap-1 uppercase tracking-wider"
-                >
-                  <span>Live Demo</span>
-                  <ArrowUpRight className="w-3 h-3 text-emerald-400" />
-                </a>
+                {project.demoUrl && (
+                  <a
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-white flex items-center gap-1 uppercase tracking-wider"
+                  >
+                    <span>Live Demo</span>
+                    <ArrowUpRight className="w-3 h-3 text-emerald-400" />
+                  </a>
+                )}
               </div>
             </div>
           ))}

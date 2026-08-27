@@ -127,16 +127,18 @@ export const ProjectShowcase: React.FC<ShowcaseProps> = ({
                         <span>{t.viewCase}</span>
                       </button>
 
-                      <a
-                        id={`live-demo-link-${project.slug}`}
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-3 border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-widest transition-all flex items-center gap-1.5"
-                      >
-                        <span>{t.launchDemo}</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
-                      </a>
+                      {project.demoUrl && (
+                        <a
+                          id={`live-demo-link-${project.slug}`}
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-3 border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 text-gray-300 hover:text-white font-bold text-xs uppercase tracking-widest transition-all flex items-center gap-1.5"
+                        >
+                          <span>{t.launchDemo}</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
+                        </a>
+                      )}
                     </div>
 
                   </div>

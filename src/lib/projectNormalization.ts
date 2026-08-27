@@ -34,6 +34,16 @@ export const normalizeLocalized = (value: unknown, fallback = ''): LocalizedStri
   };
 };
 
+export const normalizeExternalUrl = (value: unknown): string => {
+  const candidate = asText(value).trim();
+  try {
+    const parsed = new URL(candidate);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.toString() : '';
+  } catch {
+    return '';
+  }
+};
+
 const normalizeFeature = (value: unknown): ProjectFeature | null => {
   const source = asRecord(parseValue(value));
   const title = normalizeLocalized(source.title);
@@ -139,8 +149,8 @@ export const normalizeProjectRecord = (row: unknown): Project => {
     statusNote: source.status_note ? normalizeLocalized(source.status_note) : undefined,
     tagline,
     description,
-    demoUrl: asText(source.demo_url),
-    repositoryUrl: asText(source.repository_url) || null,
+    demoUrl: normalizeExternalUrl(source.demo_url),
+    repositoryUrl: normalizeExternalUrl(source.repository_url) || null,
     featured: Boolean(source.featured),
     published: Boolean(source.published),
     coverImage: asText(source.cover_image) || undefined,

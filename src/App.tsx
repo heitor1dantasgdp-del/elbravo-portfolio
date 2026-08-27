@@ -22,6 +22,7 @@ import { Footer } from './components/Footer';
 import { AdminRouter } from './components/admin/AdminRouter';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFoundView } from './components/NotFoundView';
+import { ResumePage } from './components/ResumePage';
 
 const getProjectSlugFromLocation = (): string | null => {
   if (typeof window === 'undefined') return null;
@@ -40,6 +41,7 @@ const getSectionFromLocation = (): string => {
   if (window.location.pathname === '/projects') return 'projects';
   if (window.location.pathname === '/about') return 'about';
   if (window.location.pathname === '/contact') return 'contact';
+  if (window.location.pathname === '/resume') return 'resume';
   return 'hero';
 };
 
@@ -74,6 +76,7 @@ export default function App() {
   });
 
   const [activeSection, setActiveSection] = useState<string>(getSectionFromLocation);
+  const isResumeRoute = typeof window !== 'undefined' && window.location.pathname === '/resume';
 
   useEffect(() => {
     const sectionId = getSectionFromLocation();
@@ -81,6 +84,23 @@ export default function App() {
     const timer = window.setTimeout(() => document.getElementById(sectionId)?.scrollIntoView(), 0);
     return () => window.clearTimeout(timer);
   }, [selectedProjectSlug]);
+
+  useEffect(() => {
+    const isResume = window.location.pathname === '/resume';
+    document.title = isResume
+      ? (lang === 'pt' ? 'Currículo — El Bravo Dantas' : 'Resume — El Bravo Dantas')
+      : 'El Bravo Dantas — I build. I test. I learn. I improve.';
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (description) {
+      description.content = isResume
+        ? (lang === 'pt'
+          ? 'Currículo de El Bravo Dantas: experiência operacional, projetos pessoais assistidos por IA, competências, formação e idiomas.'
+          : 'Resume of El Bravo Dantas: operations experience, personal AI-assisted projects, skills, education, and languages.')
+        : (lang === 'pt'
+          ? 'Portfólio de El Bravo Dantas — desenvolvedor e criador de produtos digitais construindo aplicações web reais através de prática, testes e aprendizado contínuo.'
+          : 'Portfolio of El Bravo Dantas — developer and digital product builder creating real web applications through practice, testing, and continuous learning.');
+    }
+  }, [lang]);
 
   // Handle language switch
   const toggleLanguage = () => {
@@ -149,6 +169,8 @@ export default function App() {
       setSelectedProjectSlug(null);
       history.pushState({}, document.title, '/');
     }
+
+    window.history.pushState({}, document.title, sectionId === 'resume' ? '/resume' : '/');
 
     setActiveSection(sectionId);
 
@@ -226,6 +248,8 @@ export default function App() {
                 Carregando projeto...
               </div>
             )
+          ) : isResumeRoute ? (
+            <ResumePage lang={lang} onBack={() => handleNavigateToSection('hero')} />
           ) : (
             <>
               {/* 01 Hero */}

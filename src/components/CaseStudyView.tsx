@@ -143,16 +143,18 @@ export const CaseStudyView: React.FC<CaseStudyProps> = ({
 
           {/* Primary Quick Actions */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <a
-              id="case-study-live-demo-primary"
-              href={project.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <span>{t.launchApp}</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
+            {project.demoUrl && (
+              <a
+                id="case-study-live-demo-primary"
+                href={project.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-xs uppercase tracking-widest shadow-lg flex items-center gap-2 transition-all cursor-pointer"
+              >
+                <span>{t.launchApp}</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </a>
+            )}
 
             <span className="text-xs font-mono-tech text-gray-400">
               {project.statusNote ? project.statusNote[lang] : t.disclaimer}

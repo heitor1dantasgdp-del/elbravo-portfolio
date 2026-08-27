@@ -2,7 +2,7 @@ import { Project } from '../types';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { projectsData } from '../data/projects';
 import { deleteProjectMediaFolder, getSupabaseClient, isLocalFallbackAllowed, isSupabaseConfigured, resolveProjectMediaUrl } from './supabase';
-import { normalizeProjectRecord } from './projectNormalization';
+import { normalizeExternalUrl, normalizeProjectRecord } from './projectNormalization';
 
 const STORAGE_KEY = 'el_bravo_portfolio_projects_v2';
 const PROJECTS_CHANGE_EVENT = 'el_bravo_projects_updated';
@@ -23,8 +23,8 @@ const mapProjectToDbRow = (project: Project): Record<string, unknown> => {
     status_note: project.statusNote || null,
     tagline: project.tagline,
     description: project.description,
-    demo_url: project.demoUrl,
-    repository_url: project.repositoryUrl,
+    demo_url: normalizeExternalUrl(project.demoUrl),
+    repository_url: normalizeExternalUrl(project.repositoryUrl),
     featured: project.featured,
     published: project.published,
     cover_image: project.coverImage || null,
